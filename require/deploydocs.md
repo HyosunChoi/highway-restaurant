@@ -104,3 +104,11 @@ git commit -m "fix: Remove exposed API keys and add environment variables"
 
 # 5. 푸시
 git push origin main
+
+# 1. 로컬에서 파일 삭제
+rm require/firebase_key.md
+
+# 2. Git에서 파일 제거
+git add -u
+git commit -m "remove: Delete firebase_key.md containing sensitive information"
+git push origin main
