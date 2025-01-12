@@ -12,7 +12,7 @@ export default function Home() {
     direction: '상행',
     restArea: '',
     menuName: '',
-    rating: 5 as const
+    rating: 5
   });
 
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
@@ -38,7 +38,7 @@ export default function Home() {
         direction: '상행',
         restArea: '',
         menuName: '',
-        rating: 5 as const
+        rating: 5
       });
     } catch (error) {
       console.error('저장 실패:', error);
@@ -133,11 +133,11 @@ export default function Home() {
               별점
             </label>
             <StarRating 
-              rating={Number(formData.rating)}
+              rating={formData.rating}
               onRatingChange={(newRating) => {
                 setFormData(prev => ({
                   ...prev,
-                  rating: newRating
+                  rating: newRating as 1 | 2 | 3 | 4 | 5
                 }));
               }}
             />
