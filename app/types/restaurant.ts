@@ -9,7 +9,7 @@ export interface Restaurant {
   updatedAt: Date;
 }
 
-export const HIGHWAYS: readonly [
+export const HIGHWAYS = [
   '경부고속도로',
   '서해안고속도로',
   '영동고속도로',
@@ -20,6 +20,6 @@ export const HIGHWAYS: readonly [
   '남해고속도로',
   '동해고속도로',
   '경인고속도로'
-];
+] as const;
 
-export type Highway = typeof HIGHWAYS[number];
+export type Highway = (typeof HIGHWAYS)[number]; 
