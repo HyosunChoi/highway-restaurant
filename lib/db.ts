@@ -12,7 +12,7 @@ import {
   DocumentData
 } from 'firebase/firestore';
 import { db } from './firebase';
-import { Restaurant } from '@/types/restaurant';
+import { Restaurant } from '@/app/types/restaurant';
 import { v4 as uuid } from 'uuid';
 
 // 컬렉션 레퍼런스

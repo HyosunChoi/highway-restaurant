@@ -77,38 +77,6 @@ Vercel 대시보드 > Settings > Environment Variables
    npm i -g vercel
    vercel
 
-
-
-   echo "# highway-restaurant" >> README.md
-git init
-git add README.md
-git commit -m "first commit"
-git branch -M main
-git remote add origin https://github.com/HyosunChoi/highway-restaurant.git
-git push -u origin main
-
-# .env.local 파일 생성
-touch .env.local
-
-# 1. 캐시된 파일들을 모두 제거
-git rm -r --cached .
-
-# 2. 변경사항 확인
-git status
-
-# 3. 변경사항 스테이징
-git add .
-
-# 4. 커밋
-git commit -m "fix: Remove exposed API keys and add environment variables"
-
-# 5. 푸시
-git push origin main
-
-# 1. 로컬에서 파일 삭제
-rm require/firebase_key.md
-
-# 2. Git에서 파일 제거
-git add -u
-git commit -m "remove: Delete firebase_key.md containing sensitive information"
+git add app/components/ui/Button.tsx
+git commit -m "fix: Update Button component types for framer-motion"
 git push origin main
