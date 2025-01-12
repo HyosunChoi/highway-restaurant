@@ -4,15 +4,15 @@ import { addRestaurant, subscribeToRestaurants } from '@/lib/db';
 import { useState, useEffect } from 'react';
 import { StarRating } from '@/components/StarRating';
 import { RestaurantList } from '@/components/RestaurantList';
-import { Restaurant } from '@/types/restaurant';
+import { Restaurant, Highway, HIGHWAYS } from '@/app/types/restaurant';
 
 export default function Home() {
   const [formData, setFormData] = useState<Omit<Restaurant, 'id' | 'createdAt' | 'updatedAt'>>({
-    highway: '',
+    highway: HIGHWAYS[0],
     direction: '상행',
     restArea: '',
     menuName: '',
-    rating: 5
+    rating: 5 as const
   });
 
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
@@ -34,11 +34,11 @@ export default function Home() {
       const result = await addRestaurant(formData);
       console.log('저장 성공:', result);
       setFormData({
-        highway: '',
+        highway: HIGHWAYS[0],
         direction: '상행',
         restArea: '',
         menuName: '',
-        rating: 5
+        rating: 5 as const
       });
     } catch (error) {
       console.error('저장 실패:', error);
@@ -49,7 +49,7 @@ export default function Home() {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: name === 'rating' ? Number(value) as 1 | 2 | 3 | 4 | 5 : value
     }));
   };
 
