@@ -1,101 +1,165 @@
-import Image from "next/image";
+'use client';
+
+import { addRestaurant, subscribeToRestaurants } from '@/lib/db';
+import { useState, useEffect } from 'react';
+import { StarRating } from '@/components/StarRating';
+import { RestaurantList } from '@/components/RestaurantList';
+import { Restaurant } from '@/types/restaurant';
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [formData, setFormData] = useState({
+    highway: '',
+    direction: '상행',
+    restArea: '',
+    menuName: '',
+    rating: 0
+  });
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
+
+  useEffect(() => {
+    // Firestore 실시간 구독 설정
+    const unsubscribe = subscribeToRestaurants((updatedRestaurants) => {
+      setRestaurants(updatedRestaurants);
+    });
+
+    // 컴포넌트 언마운트 시 구독 해제
+    return () => unsubscribe();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      if (formData.rating === 0) {
+        alert('별점을 선택해주세요');
+        return;
+      }
+      console.log('폼 데이터:', formData);
+      const result = await addRestaurant(formData);
+      console.log('저장 성공:', result);
+      setFormData({
+        highway: '',
+        direction: '상행',
+        restArea: '',
+        menuName: '',
+        rating: 0
+      });
+    } catch (error) {
+      console.error('저장 실패:', error);
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  return (
+    <main className="min-h-screen p-8">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold text-center mb-8">
+          고속도로 휴게소 맛집
+        </h1>
+        <p className="text-center mb-8 text-gray-600">
+          전국 고속도로 휴게소의 맛있는 메뉴를 공유하세요
+        </p>
+
+        <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-lg shadow mb-8">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              고속도로
+            </label>
+            <select
+              name="highway"
+              value={formData.highway}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+              required
+            >
+              <option value="">선택하세요</option>
+              <option value="경부고속도로">경부고속도로</option>
+              <option value="서해안고속도로">서해안고속도로</option>
+              <option value="영동고속도로">영동고속도로</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              방향
+            </label>
+            <select
+              name="direction"
+              value={formData.direction}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+              required
+            >
+              <option value="상행">상행</option>
+              <option value="하행">하행</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              휴게소 이름
+            </label>
+            <input
+              type="text"
+              name="restArea"
+              value={formData.restArea}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+              required
+              placeholder="예: 안성휴게소"
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              메뉴명
+            </label>
+            <input
+              type="text"
+              name="menuName"
+              value={formData.menuName}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+              required
+              placeholder="예: 안성탕면"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              별점
+            </label>
+            <StarRating 
+              rating={Number(formData.rating)}
+              onRatingChange={(newRating) => {
+                setFormData(prev => ({
+                  ...prev,
+                  rating: newRating
+                }));
+              }}
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors"
           >
-            Read our docs
-          </a>
+            등록하기
+          </button>
+        </form>
+
+        <div className="mt-12">
+          <h2 className="text-2xl font-bold mb-6">등록된 맛집</h2>
+          <RestaurantList restaurants={restaurants} />
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      </div>
+    </main>
   );
 }

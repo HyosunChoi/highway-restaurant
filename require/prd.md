@@ -1,28 +1,65 @@
+### Project Overview (프로젝트 개요):
+이 프로젝트는 고속도로 휴게소의 맛집 정보를 공유하고 관리하는 웹 애플리케이션으로, Firebase를 활용해 데이터를 저장하고 관리합니다.
 
-Project Overview (프로젝트 개요):
-이 프로젝트는 사용자가 할 일을 관리할 수 있는 투두리스트 웹 애플리케이션으로, Firebase를 활용해 데이터를 저장하고 관리합니다.
+### Core Functionalities (핵심 기능):
+✅ 완료된 기능:
+- 데이터베이스 설계
+- Firebase 연동 설계
+- 보안 규칙 설정
+- 기본 UI 컴포넌트 구현
+- 반응형 레이아웃 구현
+- 다크모드 지원
 
-사용자는 할 일을 추가, 수정, 삭제할 수 있으며, Firebase에 저장된 데이터가 실시간으로 동기화됩니다.
-간단하고 직관적인 인터페이스를 통해 할 일의 우선순위를 설정하고 완료된 항목을 체크할 수 있습니다.
-Core Functionalities (핵심 기능):
-투두리스트의 주요 기능은 다음과 같습니다:
+🚀 진행 예정 기능:
+- Firebase 연동 및 실시간 데이터 동기화
+- 고속도로 휴게소 맛집 정보 입력
+  - 고속도로 노선 선택 (셀렉트 박스)
+  - 방향 선택 (상행/하행)
+  - 휴게소 이름 입력
+  - 메뉴명 입력
+  - 별점 평가 (5점 만점)
+- 맛집 정보 필터링 및 정렬
+  - 노선별 필터링
+  - 방향별 필터링
+  - 별점 기준 정렬
 
-할 일 추가: 사용자가 새로운 할 일을 추가하면 Firebase에 저장됩니다.
-할 일 수정: 기존 할 일을 수정하면 Firebase에 자동으로 반영됩니다.
-할 일 삭제: 불필요한 항목을 삭제하면 Firebase에서도 제거됩니다.
-완료 체크: 완료된 항목을 체크하면 Firebase에 해당 정보가 업데이트됩니다.
-우선순위 설정: 할 일의 중요도를 설정하여 우선 처리할 항목을 관리합니다.
-Doc (문서):
-프로젝트 개발에 사용될 기술 스택과 도구는 다음과 같습니다:
+### 데이터 구조:
+restaurants (collection)
+├── id: string
+├── highway: string // 고속도로 노선
+├── direction: '상행' | '하행'
+├── restArea: string // 휴게소 이름
+├── menuName: string // 메뉴명
+├── rating: number // 별점 (1-5)
+├── createdAt: timestamp
+└── updatedAt: timestamp
 
-Frontend: React, TailwindCSS, TypeScript를 사용하여 UI와 기능을 구현합니다.
-Backend: Firestore를 사용하여 데이터를 저장하고 실시간으로 동기화합니다.
-npm 패키지:
-• firebase: Firebase와의 연동을 위해 사용합니다.
+### UI/UX 개선사항:
+1. 디자인 시스템
+   - Color Scheme: 
+     - Primary: #3B82F6 (블루)
+     - Secondary: #10B981 (그린)
+     - Accent: #8B5CF6 (퍼플)
+     - Background: #FFFFFF/#1F2937 (라이트/다크)
+   
+2. 사용성 개선
+   - 별점 입력을 위한 직관적인 UI
+   - 고속도로 노선 쉬운 선택
+   - 자주 가는 휴게소 빠른 선택
+   
+3. 반응형 디자인
+   - Mobile: < 640px
+   - Tablet: 640px - 1024px
+   - Desktop: > 1024px
 
-• react-icons: 직관적인 인터페이스를 위한 아이콘을 제공합니다.
+### Tech Stack (기술 스택):
+- Frontend: React, TailwindCSS, TypeScript
+- Backend: Firebase/Firestore
+- Packages:
+  - firebase
+  - react-icons
+  - uuid
+  - framer-motion (애니메이션)
+  - @heroicons/react (아이콘)
 
-• uuid: 각 투두 항목에 고유한 ID를 부여합니다.
-
-Current File Structure (현재 파일 구조):
-실제 프로젝트가 생성되면 커서를 이용해 작성할 예정이므로 현재는 비워둡니다.
+### File Structure (파일 구조):
