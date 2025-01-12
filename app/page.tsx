@@ -7,12 +7,12 @@ import { RestaurantList } from '@/components/RestaurantList';
 import { Restaurant } from '@/types/restaurant';
 
 export default function Home() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<Omit<Restaurant, 'id' | 'createdAt' | 'updatedAt'>>({
     highway: '',
     direction: '상행',
     restArea: '',
     menuName: '',
-    rating: 0
+    rating: 5
   });
 
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
@@ -30,10 +30,6 @@ export default function Home() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      if (formData.rating === 0) {
-        alert('별점을 선택해주세요');
-        return;
-      }
       console.log('폼 데이터:', formData);
       const result = await addRestaurant(formData);
       console.log('저장 성공:', result);
@@ -42,7 +38,7 @@ export default function Home() {
         direction: '상행',
         restArea: '',
         menuName: '',
-        rating: 0
+        rating: 5
       });
     } catch (error) {
       console.error('저장 실패:', error);
