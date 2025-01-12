@@ -86,3 +86,21 @@ git commit -m "first commit"
 git branch -M main
 git remote add origin https://github.com/HyosunChoi/highway-restaurant.git
 git push -u origin main
+
+# .env.local 파일 생성
+touch .env.local
+
+# 1. 캐시된 파일들을 모두 제거
+git rm -r --cached .
+
+# 2. 변경사항 확인
+git status
+
+# 3. 변경사항 스테이징
+git add .
+
+# 4. 커밋
+git commit -m "fix: Remove exposed API keys and add environment variables"
+
+# 5. 푸시
+git push origin main
