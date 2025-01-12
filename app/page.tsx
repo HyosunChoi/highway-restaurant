@@ -4,7 +4,7 @@ import { addRestaurant, subscribeToRestaurants } from '@/lib/db';
 import { useState, useEffect } from 'react';
 import { StarRating } from '@/components/StarRating';
 import { RestaurantList } from '@/components/RestaurantList';
-import { Restaurant, Highway, HIGHWAYS } from '../../types/restaurant';
+import { Restaurant, Highway, HIGHWAYS } from './types/restaurant';
 
 export default function Home() {
   const [formData, setFormData] = useState<Omit<Restaurant, 'id' | 'createdAt' | 'updatedAt'>>({
