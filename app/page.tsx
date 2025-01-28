@@ -16,23 +16,25 @@ export default function Home() {
   });
 
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Firestore 실시간 구독 설정
-    const unsubscribe = subscribeToRestaurants((updatedRestaurants) => {
-      setRestaurants(updatedRestaurants);
+    const unsubscribe = subscribeToRestaurants((data) => {
+      setRestaurants(data);
+      setLoading(false);
     });
 
-    // 컴포넌트 언마운트 시 구독 해제
     return () => unsubscribe();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+    
     try {
-      console.log('폼 데이터:', formData);
-      const result = await addRestaurant(formData);
-      console.log('저장 성공:', result);
+      await addRestaurant(formData);
+      // 폼 초기화
       setFormData({
         highway: HIGHWAYS[0],
         direction: '상행',
@@ -40,8 +42,9 @@ export default function Home() {
         menuName: '',
         rating: 5
       });
-    } catch (error) {
-      console.error('저장 실패:', error);
+    } catch (err) {
+      setError('데이터 저장 중 오류가 발생했습니다.');
+      console.error(err);
     }
   };
 
@@ -53,108 +56,105 @@ export default function Home() {
     }));
   };
 
+  if (loading) return <div>로딩 중...</div>;
+  if (error) return <div>에러: {error}</div>;
+
   return (
-    <main className="min-h-screen p-8">
-      <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold text-center mb-8">
-          고속도로 휴게소 맛집
-        </h1>
-        <p className="text-center mb-8 text-gray-600">
-          전국 고속도로 휴게소의 맛있는 메뉴를 공유하세요
-        </p>
-
-        <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-lg shadow mb-8">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              고속도로
-            </label>
-            <select
-              name="highway"
-              value={formData.highway}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-              required
-            >
-              <option value="">선택하세요</option>
-              <option value="경부고속도로">경부고속도로</option>
-              <option value="서해안고속도로">서해안고속도로</option>
-              <option value="영동고속도로">영동고속도로</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              방향
-            </label>
-            <select
-              name="direction"
-              value={formData.direction}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-              required
-            >
-              <option value="상행">상행</option>
-              <option value="하행">하행</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              휴게소 이름
-            </label>
-            <input
-              type="text"
-              name="restArea"
-              value={formData.restArea}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-              required
-              placeholder="예: 안성휴게소"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              메뉴명
-            </label>
-            <input
-              type="text"
-              name="menuName"
-              value={formData.menuName}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-              required
-              placeholder="예: 안성탕면"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              별점
-            </label>
-            <StarRating 
-              rating={formData.rating}
-              onRatingChange={(newRating) => {
-                setFormData(prev => ({
-                  ...prev,
-                  rating: newRating as 1 | 2 | 3 | 4 | 5
-                }));
-              }}
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors"
+    <main className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">고속도로 휴게소 맛집</h1>
+      
+      <form onSubmit={handleSubmit} className="mb-8">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            고속도로
+          </label>
+          <select
+            name="highway"
+            value={formData.highway}
+            onChange={handleChange}
+            className="w-full p-2 border rounded"
+            required
           >
-            등록하기
-          </button>
-        </form>
-
-        <div className="mt-12">
-          <h2 className="text-2xl font-bold mb-6">등록된 맛집</h2>
-          <RestaurantList restaurants={restaurants} />
+            <option value="">선택하세요</option>
+            <option value="경부고속도로">경부고속도로</option>
+            <option value="서해안고속도로">서해안고속도로</option>
+            <option value="영동고속도로">영동고속도로</option>
+          </select>
         </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            방향
+          </label>
+          <select
+            name="direction"
+            value={formData.direction}
+            onChange={handleChange}
+            className="w-full p-2 border rounded"
+            required
+          >
+            <option value="상행">상행</option>
+            <option value="하행">하행</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            휴게소 이름
+          </label>
+          <input
+            type="text"
+            name="restArea"
+            value={formData.restArea}
+            onChange={handleChange}
+            className="w-full p-2 border rounded"
+            required
+            placeholder="예: 안성휴게소"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            메뉴명
+          </label>
+          <input
+            type="text"
+            name="menuName"
+            value={formData.menuName}
+            onChange={handleChange}
+            className="w-full p-2 border rounded"
+            required
+            placeholder="예: 안성탕면"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            별점
+          </label>
+          <StarRating 
+            rating={formData.rating}
+            onRatingChange={(newRating) => {
+              setFormData(prev => ({
+                ...prev,
+                rating: newRating as 1 | 2 | 3 | 4 | 5
+              }));
+            }}
+          />
+        </div>
+
+        <button
+          type="submit"
+          className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors"
+        >
+          등록하기
+        </button>
+      </form>
+
+      <div className="grid gap-4">
+        {restaurants.map((restaurant) => (
+          <RestaurantList key={restaurant.id} restaurant={restaurant} />
+        ))}
       </div>
     </main>
   );

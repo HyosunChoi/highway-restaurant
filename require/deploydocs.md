@@ -77,6 +77,23 @@ Vercel 대시보드 > Settings > Environment Variables
    npm i -g vercel
    vercel
 
-git add app/components/ui/Button.tsx
-git commit -m "fix: Update Button component types for framer-motion"
+# 타입 파일 이동
+mkdir -p app/types
+mv types/restaurant.d.ts app/types/
+
+# 변경사항 커밋
+git add app/types/restaurant.d.ts app/page.tsx lib/db.ts
+git commit -m "fix: Move type definitions to app directory"
+git push origin main
+
+# 파일 이름 변경
+mv app/types/restaurant.d.ts app/types/restaurant.ts
+
+# 변경사항 스테이징
+git add app/page.tsx
+
+# 커밋 생성
+git commit -m "fix: Add type assertion for rating in StarRating component"
+
+# GitHub에 푸시
 git push origin main
